@@ -1,12 +1,14 @@
 import 'package:batch_api_demo/optional.dart';
 import 'package:batch_api_demo/users_repo.dart';
-import 'package:collection/collection.dart';
+import 'package:built_collection/built_collection.dart';
+import 'package:flutter/foundation.dart';
 
+@immutable
 class UserItem {
   final User user;
   final bool isLoading;
 
-  UserItem({
+  const UserItem({
     required this.user,
     required this.isLoading,
   });
@@ -23,18 +25,19 @@ class UserItem {
   int get hashCode => user.hashCode ^ isLoading.hashCode;
 }
 
+@immutable
 class MainState {
-  final List<UserItem> users;
+  final BuiltList<UserItem> users;
   final bool isLoading;
   final Option<Object> error;
 
   static final initial = MainState(
-    users: const <UserItem>[],
+    users: const <UserItem>[].build(),
     isLoading: true,
     error: Option.none(),
   );
 
-  MainState({
+  const MainState({
     required this.users,
     required this.isLoading,
     required this.error,
@@ -45,18 +48,15 @@ class MainState {
       identical(this, other) ||
       other is MainState &&
           runtimeType == other.runtimeType &&
-          const ListEquality<UserItem>().equals(users, other.users) &&
+          users == other.users &&
           isLoading == other.isLoading &&
           error == other.error;
 
   @override
-  int get hashCode =>
-      const ListEquality<UserItem>().hash(users) ^
-      isLoading.hashCode ^
-      error.hashCode;
+  int get hashCode => users.hashCode ^ isLoading.hashCode ^ error.hashCode;
 
   MainState copyWith({
-    List<UserItem>? users,
+    BuiltList<UserItem>? users,
     bool? isLoading,
     Option<Object>? error,
   }) =>

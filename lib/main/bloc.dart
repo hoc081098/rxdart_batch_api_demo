@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:batch_api_demo/main/partial_state_change.dart';
 import 'package:batch_api_demo/main/state.dart';
 import 'package:batch_api_demo/users_repo.dart';
+import 'package:built_collection/built_collection.dart';
 import 'package:disposebag/disposebag.dart';
 import 'package:flutter_bloc_pattern/flutter_bloc_pattern.dart';
 import 'package:rxdart_ext/rxdart_ext.dart';
@@ -33,7 +34,7 @@ class MainBloc extends DisposeCallbackBaseBloc {
 
     return MainBloc._(
       dispose: DisposeBag([fetchS, state$.connect()]).dispose,
-      fetch: () => fetchS.add(null),
+      fetch: fetchS.addNull,
       state$: state$,
     );
   }
@@ -44,7 +45,7 @@ class MainBloc extends DisposeCallbackBaseBloc {
           .exhaustMap((users) {
             final items = users
                 .map((user) => UserItem(user: user, isLoading: true))
-                .toList(growable: false);
+                .toBuiltList();
 
             return Rx.concat<PartialStateChange>([
               Stream.value(UsersListChange(items)),

@@ -1,6 +1,7 @@
 import 'package:batch_api_demo/main/bloc.dart';
 import 'package:batch_api_demo/main/state.dart';
 import 'package:batch_api_demo/optional.dart';
+import 'package:built_collection/built_collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc_pattern/flutter_bloc_pattern.dart';
 
@@ -49,7 +50,7 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 
 class UsersListView extends StatelessWidget {
-  final List<UserItem> items;
+  final BuiltList<UserItem> items;
 
   const UsersListView({Key? key, required this.items}) : super(key: key);
 

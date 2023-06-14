@@ -1,6 +1,8 @@
+import 'package:built_collection/built_collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:rxdart_ext/rxdart_ext.dart';
 
+@immutable
 class User {
   final int id;
   final String name;
@@ -34,7 +36,7 @@ class User {
 }
 
 class UsersRepo {
-  Single<List<User>> fetchUsers() => Single.fromCallable(() async {
+  Single<BuiltList<User>> fetchUsers() => Single.fromCallable(() async {
         await delay(2000);
         return List.generate(
           20,
@@ -44,7 +46,7 @@ class UsersRepo {
             avatarName: 'avatar_$index',
             avatarUrl: null,
           ),
-        );
+        ).build();
       }).doOnListen(() => debugPrint('UsersRepo.fetchUsers() started'));
 
   Single<String> fetchUserAvatarUrl(User user) => Single.fromCallable(() async {

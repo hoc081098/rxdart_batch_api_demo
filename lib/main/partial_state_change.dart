@@ -1,6 +1,9 @@
 import 'package:batch_api_demo/main/state.dart';
 import 'package:batch_api_demo/optional.dart';
+import 'package:built_collection/built_collection.dart';
+import 'package:flutter/foundation.dart';
 
+@immutable
 abstract class PartialStateChange {
   MainState reduce(MainState state);
 }
@@ -16,7 +19,7 @@ class UsersLoadingChange implements PartialStateChange {
 }
 
 class UsersListChange implements PartialStateChange {
-  final List<UserItem> users;
+  final BuiltList<UserItem> users;
 
   UsersListChange(this.users);
 
@@ -48,9 +51,11 @@ class UserItemUpdatedChange implements PartialStateChange {
   UserItemUpdatedChange(this.userItem);
 
   @override
-  MainState reduce(MainState state) => state.copyWith(
-        users: state.users
-            .map((e) => e.user.id == userItem.user.id ? userItem : e)
-            .toList(),
-      );
+  MainState reduce(MainState state) {
+    return state.copyWith(
+      users: state.users
+          .map((e) => e.user.id == userItem.user.id ? userItem : e)
+          .toBuiltList(),
+    );
+  }
 }
