@@ -16,6 +16,7 @@ class UsersLoadingChange implements MainPartialStateChange {
   MainState reduce(MainState state) => state.copyWith(
         isLoading: true,
         error: Option.none(),
+        cancelled: false,
       );
 }
 
@@ -29,6 +30,7 @@ class UsersListChange implements MainPartialStateChange {
         users: users,
         isLoading: false,
         error: Option.none(),
+        cancelled: false,
       );
 }
 
@@ -41,6 +43,15 @@ class UsersErrorChange implements MainPartialStateChange {
   MainState reduce(MainState state) => state.copyWith(
         isLoading: false,
         error: Option.some(error),
+        cancelled: false,
+      );
+}
+
+class UsersCancelledChange implements MainPartialStateChange {
+  @override
+  MainState reduce(MainState state) => MainState.initial.copyWith(
+        cancelled: true,
+        isLoading: false,
       );
 }
 

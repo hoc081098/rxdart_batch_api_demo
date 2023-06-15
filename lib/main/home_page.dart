@@ -30,6 +30,10 @@ class _MyHomePageState extends State<MyHomePage> {
             onPressed: () => context.bloc<MainBloc>().fetch(),
             icon: const Icon(Icons.refresh),
           ),
+          IconButton(
+            onPressed: () => context.bloc<MainBloc>().cancel(),
+            icon: const Icon(Icons.cancel),
+          ),
           RxStreamBuilder<bool>(
             stream: UsersRepo.failed$,
             builder: (context, state) => TextButton(
@@ -46,6 +50,12 @@ class _MyHomePageState extends State<MyHomePage> {
         child: RxStreamBuilder<MainState>(
           stream: context.bloc<MainBloc>().state$,
           builder: (context, state) {
+            if (state.cancelled) {
+              return const Center(
+                child: Text('Cancelled'),
+              );
+            }
+
             if (state.error.isNotEmpty) {
               return Center(
                 child: Text('Error: ${state.error.valueOrNull()!.message}'),
