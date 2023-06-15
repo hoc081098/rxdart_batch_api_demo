@@ -45,7 +45,11 @@ class MainBloc extends DisposeCallbackBaseBloc {
         .publishState(MainState.initial);
 
     return MainBloc._(
-      dispose: DisposeBag([fetchS, state$.connect()]).dispose,
+      dispose: DisposeBag([
+        fetchS,
+        cancelS,
+        state$.connect(),
+      ]).dispose,
       fetch: fetchS.addNull,
       cancel: cancelS.addNull,
       state$: state$,
