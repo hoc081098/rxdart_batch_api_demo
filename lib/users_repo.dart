@@ -58,9 +58,7 @@ class UserError {
 class UsersRepo {
   static final _failedS = StateSubject(false);
 
-  static bool get _failed => _failedS.value;
-
-  static BuiltList<User> _genFakeUsers([void _]) => _failed
+  static BuiltList<User> _genFakeUsers([void _]) => UsersRepo._failedS.value
       ? throw Exception()
       : List.generate(
           20,
@@ -73,7 +71,9 @@ class UsersRepo {
         ).build();
 
   static String Function([void _]) _genFakeUserAvatarUrl(User user) =>
-      ([_]) => _failed ? throw Exception() : 'https://avatar_${user.id}.jpg';
+      ([_]) => UsersRepo._failedS.value
+          ? throw Exception()
+          : 'https://avatar_${user.id}.jpg';
 
   // ---------------------------- PUBLIC ----------------------------
 
