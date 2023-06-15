@@ -1,6 +1,7 @@
-import 'package:batch_api_demo/main/bloc.dart';
-import 'package:batch_api_demo/main/state.dart';
+import 'package:batch_api_demo/main/main_bloc.dart';
+import 'package:batch_api_demo/main/main_state.dart';
 import 'package:batch_api_demo/optional.dart';
+import 'package:batch_api_demo/users_repo.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc_pattern/flutter_bloc_pattern.dart';
@@ -24,6 +25,22 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Batch API demo'),
+        actions: [
+          IconButton(
+            onPressed: () => context.bloc<MainBloc>().fetch(),
+            icon: const Icon(Icons.refresh),
+          ),
+          RxStreamBuilder<bool>(
+            stream: UsersRepo.failed$,
+            builder: (context, state) => TextButton(
+              onPressed: UsersRepo.toggleFailed,
+              child: Text(
+                state ? 'failed' : 'succeed',
+                style: TextStyle(color: state ? Colors.red : Colors.green),
+              ),
+            ),
+          ),
+        ],
       ),
       body: SizedBox.expand(
         child: RxStreamBuilder<MainState>(
@@ -31,7 +48,7 @@ class _MyHomePageState extends State<MyHomePage> {
           builder: (context, state) {
             if (state.error.isNotEmpty) {
               return Center(
-                child: Text('Error: ${state.error.valueOrNull()}'),
+                child: Text('Error: ${state.error.valueOrNull()!.message}'),
               );
             }
 
@@ -60,7 +77,10 @@ class UsersListView extends StatelessWidget {
       itemCount: items.length,
       itemBuilder: (context, index) {
         final item = items[index];
-        return UserItemRow(item: item);
+        return UserItemRow(
+          key: ValueKey(item.user.id),
+          item: item,
+        );
       },
     );
   }
@@ -75,17 +95,19 @@ class UserItemRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       title: Text(item.user.name),
-      subtitle: item.isLoading
-          ? Text(
-              'Loading...',
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyMedium!
-                  .copyWith(color: Colors.red),
-            )
-          : item.user.avatarUrl != null
-              ? Text('Avatar: ${item.user.avatarUrl}')
-              : const Text('No avatar'),
+      subtitle: switch ((item.isLoading, item.error)) {
+        (true, _) => Text(
+            'Loading...',
+            style: Theme.of(context)
+                .textTheme
+                .bodyMedium!
+                .copyWith(color: Colors.red),
+          ),
+        (_, Some(value: final error)) => Text('Error: ${error.message}'),
+        _ => item.user.avatarUrl != null
+            ? Text('Avatar: ${item.user.avatarUrl}')
+            : const Text('No avatar'),
+      },
       leading: const CircleAvatar(
         child: Icon(Icons.person),
       ),

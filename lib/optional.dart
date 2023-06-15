@@ -1,5 +1,9 @@
 // ignore_for_file: unnecessary_cast
 
+extension PipeFunction1<T, R> on R Function(T) {
+  R2 Function(T) pipe<R2>(R2 Function(R) f) => (T t) => f(this(t));
+}
+
 sealed class Option<T> {
   const Option();
 

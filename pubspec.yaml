@@ -38,6 +38,7 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
   rxdart_ext: ^0.2.9
+  dart_either: ^1.0.0
   flutter_bloc_pattern: ^2.3.0
   flutter_provider: ^2.1.0
   built_collection: ^5.1.1

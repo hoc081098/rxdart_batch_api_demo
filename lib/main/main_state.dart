@@ -7,11 +7,31 @@ import 'package:flutter/foundation.dart';
 class UserItem {
   final User user;
   final bool isLoading;
+  final Option<UserError> error;
 
   const UserItem({
     required this.user,
     required this.isLoading,
+    required this.error,
   });
+
+  factory UserItem.loaded(User user) => UserItem(
+        user: user,
+        isLoading: false,
+        error: Option.none(),
+      );
+
+  factory UserItem.loading(User user) => UserItem(
+        user: user,
+        isLoading: true,
+        error: Option.none(),
+      );
+
+  factory UserItem.failed(User user, UserError error) => UserItem(
+        user: user,
+        isLoading: false,
+        error: error.some(),
+      );
 
   @override
   bool operator ==(Object other) =>
@@ -29,7 +49,7 @@ class UserItem {
 class MainState {
   final BuiltList<UserItem> users;
   final bool isLoading;
-  final Option<Object> error;
+  final Option<UserError> error;
 
   static final initial = MainState(
     users: const <UserItem>[].build(),
@@ -58,7 +78,7 @@ class MainState {
   MainState copyWith({
     BuiltList<UserItem>? users,
     bool? isLoading,
-    Option<Object>? error,
+    Option<UserError>? error,
   }) =>
       MainState(
         users: users ?? this.users,

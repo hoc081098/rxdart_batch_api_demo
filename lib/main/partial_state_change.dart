@@ -1,16 +1,17 @@
-import 'package:batch_api_demo/main/state.dart';
+import 'package:batch_api_demo/main/main_state.dart';
 import 'package:batch_api_demo/optional.dart';
+import 'package:batch_api_demo/users_repo.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:flutter/foundation.dart';
 
 @immutable
-abstract class PartialStateChange {
+sealed class MainPartialStateChange {
   MainState reduce(MainState state);
 }
 
 // ------------------------------ USERS ------------------------------
 
-class UsersLoadingChange implements PartialStateChange {
+class UsersLoadingChange implements MainPartialStateChange {
   @override
   MainState reduce(MainState state) => state.copyWith(
         isLoading: true,
@@ -18,7 +19,7 @@ class UsersLoadingChange implements PartialStateChange {
       );
 }
 
-class UsersListChange implements PartialStateChange {
+class UsersListChange implements MainPartialStateChange {
   final BuiltList<UserItem> users;
 
   UsersListChange(this.users);
@@ -31,8 +32,8 @@ class UsersListChange implements PartialStateChange {
       );
 }
 
-class UsersErrorChange implements PartialStateChange {
-  final Object error;
+class UsersErrorChange implements MainPartialStateChange {
+  final UserError error;
 
   UsersErrorChange(this.error);
 
@@ -45,7 +46,7 @@ class UsersErrorChange implements PartialStateChange {
 
 // ------------------------------ USER ITEMS ------------------------------
 
-class UserItemUpdatedChange implements PartialStateChange {
+class UserItemUpdatedChange implements MainPartialStateChange {
   final UserItem userItem;
 
   UserItemUpdatedChange(this.userItem);

@@ -1,5 +1,5 @@
-import 'package:batch_api_demo/main/bloc.dart';
 import 'package:batch_api_demo/main/home_page.dart';
+import 'package:batch_api_demo/main/main_bloc.dart';
 import 'package:batch_api_demo/users_repo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc_pattern/flutter_bloc_pattern.dart';
@@ -25,6 +25,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
         colorSchemeSeed: Colors.purple,
       ),
+      debugShowCheckedModeBanner: false,
       home: BlocProvider(
         initBloc: (context) => MainBloc(usersRepo: context.get()),
         child: const MyHomePage(),
