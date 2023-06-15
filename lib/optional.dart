@@ -1,6 +1,6 @@
 // ignore_for_file: unnecessary_cast
 
-abstract class Option<T> {
+sealed class Option<T> {
   const Option();
 
   const factory Option.some(T value) = Some<T>;
@@ -35,18 +35,16 @@ extension OptionExtensions<T> on Option<T> {
   R fold<R>({
     required R Function(T value) some,
     required R Function() none,
-  }) {
-    if (this is Some<T>) {
-      return some((this as Some<T>).value);
-    } else {
-      return none();
-    }
-  }
+  }) =>
+      switch (this) {
+        Some(value: final v) => some(v),
+        None() => none(),
+      };
 
   T? valueOrNull() => fold(
-    some: (value) => value,
-    none: () => null,
-  );
+        some: (value) => value,
+        none: () => null,
+      );
 }
 
 class Some<T> extends Option<T> {

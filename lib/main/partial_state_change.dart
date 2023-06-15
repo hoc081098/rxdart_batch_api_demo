@@ -1,22 +1,27 @@
-import 'package:batch_api_demo/main/state.dart';
+import 'package:batch_api_demo/main/main_state.dart';
 import 'package:batch_api_demo/optional.dart';
+import 'package:batch_api_demo/users_repo.dart';
+import 'package:built_collection/built_collection.dart';
+import 'package:flutter/foundation.dart';
 
-abstract class PartialStateChange {
+@immutable
+sealed class MainPartialStateChange {
   MainState reduce(MainState state);
 }
 
 // ------------------------------ USERS ------------------------------
 
-class UsersLoadingChange implements PartialStateChange {
+class UsersLoadingChange implements MainPartialStateChange {
   @override
   MainState reduce(MainState state) => state.copyWith(
         isLoading: true,
         error: Option.none(),
+        cancelled: false,
       );
 }
 
-class UsersListChange implements PartialStateChange {
-  final List<UserItem> users;
+class UsersListChange implements MainPartialStateChange {
+  final BuiltList<UserItem> users;
 
   UsersListChange(this.users);
 
@@ -25,11 +30,12 @@ class UsersListChange implements PartialStateChange {
         users: users,
         isLoading: false,
         error: Option.none(),
+        cancelled: false,
       );
 }
 
-class UsersErrorChange implements PartialStateChange {
-  final Object error;
+class UsersErrorChange implements MainPartialStateChange {
+  final UserError error;
 
   UsersErrorChange(this.error);
 
@@ -37,20 +43,31 @@ class UsersErrorChange implements PartialStateChange {
   MainState reduce(MainState state) => state.copyWith(
         isLoading: false,
         error: Option.some(error),
+        cancelled: false,
+      );
+}
+
+class UsersCancelledChange implements MainPartialStateChange {
+  @override
+  MainState reduce(MainState state) => MainState.initial.copyWith(
+        cancelled: true,
+        isLoading: false,
       );
 }
 
 // ------------------------------ USER ITEMS ------------------------------
 
-class UserItemUpdatedChange implements PartialStateChange {
+class UserItemUpdatedChange implements MainPartialStateChange {
   final UserItem userItem;
 
   UserItemUpdatedChange(this.userItem);
 
   @override
-  MainState reduce(MainState state) => state.copyWith(
-        users: state.users
-            .map((e) => e.user.id == userItem.user.id ? userItem : e)
-            .toList(),
-      );
+  MainState reduce(MainState state) {
+    return state.copyWith(
+      users: state.users
+          .map((e) => e.user.id == userItem.user.id ? userItem : e)
+          .toBuiltList(),
+    );
+  }
 }
