@@ -35,13 +35,11 @@ extension OptionExtensions<T> on Option<T> {
   R fold<R>({
     required R Function(T value) some,
     required R Function() none,
-  }) {
-    final self = this;
-    return switch (self) {
-      Some() => some(self.value),
-      None() => none(),
-    };
-  }
+  }) =>
+      switch (this) {
+        Some(value: final v) => some(v),
+        None() => none(),
+      };
 
   T? valueOrNull() => fold(
         some: (value) => value,
